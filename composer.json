@@ -1,0 +1,5 @@
+{
+    "require": {
+        "rmasters/swapi": "~0.2.0"
+    }
+}
