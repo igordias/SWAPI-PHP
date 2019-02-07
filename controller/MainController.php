@@ -35,6 +35,9 @@ class MainController
             case 'vehicle':
                 $this->buildVehiclePage();
                 break;
+            case 'species':
+                $this->buildSpeciesPage();
+                break;
         }
     }
 
@@ -152,9 +155,31 @@ class MainController
         }
     }
 
+    function buildSpeciesPage(){
+        if(isset($_GET["species"])){
+            $species_id = $_GET["species"];
+        }else{
+            $this->throw404();
+            die();
+        }
+        try {
+            $data["species"] = $this->swapi->species()->get($species_id);
+            
+            $data["species"]->homeworld = $this->swapi->getFromUri($data["species"]->homeworld->url);
 
+            foreach($data["species"]->films as &$film){
+                $film = $this->swapi->getFromUri($film->url);
+            }
 
+            foreach($data["species"]->people as &$person){
+                $person = $this->swapi->getFromUri($person->url);
+            }
 
+            $view = new View('SpeciesView', $data);
+        } catch (GuzzleHttp\Exception\ClientException $exception) {
+            $this->throw404();
+        }
+    }
 
     function throw404(){
         $view = new View('404', null);
