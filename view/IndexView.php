@@ -7,7 +7,7 @@
 <?php
     $i = 1;
     foreach($data["films"] as $film){
-        echo "<li><a href=\"?page=movie&film=" . $i++ . "\"> " . $film->title . "</a></li>";
+        echo "<li><a href=\"/film/" . $i++ . "\"> " . $film->title . "</a></li>";
     }
 ?>
 </ul>

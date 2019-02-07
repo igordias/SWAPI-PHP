@@ -1,5 +1,5 @@
 <head>
-    <title>Star Wars</title>
+    <title>Star Wars - Character: <?php echo $data["character"]->name ; ?></title>
 </head>
 <body>
 <h1><?php echo $data["character"]->name ; ?></h1>
@@ -16,7 +16,7 @@
         <ul>
             <?php 
                 foreach($data["character"]->films as $film){
-                    echo "<li>".$film->title."</li>";
+                    echo "<li><a href=\"/film/" . $film->id . "\"> " .$film->title."</a></li>";
                 }
             ?>
         </ul>
@@ -25,7 +25,7 @@
         <ul>
         <?php 
             foreach($data["character"]->species as $species){
-                echo "<li>".$species->name."</li>";
+                echo "<li><a href=\"/species/" . $species->id . "\"> " .$species->name."</a></li>";
             }
         ?>
         </ul>
@@ -34,7 +34,7 @@
         <ul>
         <?php 
             foreach($data["character"]->starships as $starship){
-                echo "<li>".$starship->name."</li>";
+                echo "<li><a href=\"/starship/" . $starship->id . "\"> " .$starship->name."</a></li>";
             }
         ?>
         </ul>
@@ -43,7 +43,7 @@
         <ul>
         <?php 
             foreach($data["character"]->vehicles as $vehicle){
-                echo "<li>".$vehicle->name."</li>";
+                echo "<li><a href=\"/vehicle/" . $vehicle->id . "\"> " .$vehicle->name."</a></li>";
             }
         ?>
         </ul>

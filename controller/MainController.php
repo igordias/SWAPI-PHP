@@ -102,7 +102,10 @@ class MainController
         try {
             $data["character"] = $this->swapi->characters()->get($char_id);
             
-            $data["character"]->homeworld = $this->swapi->getFromUri($data["character"]->homeworld->url);
+            if(!is_null($data["character"]->homeworld)){
+                $data["character"]->homeworld = $this->swapi->getFromUri($data["character"]->homeworld->url);
+                $data["character"]->homeworld->id = $this->swapi->extractIdFromUrl($data["character"]->homeworld->url);
+            }
 
             $this->gatherAllData($data["character"]->films);
             $this->gatherAllData($data["character"]->species);
@@ -144,7 +147,10 @@ class MainController
         try {
             $data["species"] = $this->swapi->species()->get($species_id);
             
-            $data["species"]->homeworld = $this->swapi->getFromUri($data["species"]->homeworld->url);
+            if(!is_null($data["species"]->homeworld)){
+                $data["species"]->homeworld = $this->swapi->getFromUri($data["species"]->homeworld->url);
+                $data["species"]->homeworld->id = $this->swapi->extractIdFromUrl($data["species"]->homeworld->url);
+            }
 
             $this->gatherAllData($data["species"]->films);
             $this->gatherAllData($data["species"]->people);
