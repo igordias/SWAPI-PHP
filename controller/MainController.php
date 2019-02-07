@@ -32,6 +32,9 @@ class MainController
             case 'character':
                 $this->buildCharPage();
                 break;
+            case 'vehicle':
+                $this->buildVehiclePage();
+                break;
         }
     }
 
@@ -119,11 +122,31 @@ class MainController
             foreach($data["character"]->vehicles as &$vehicle){
                 $vehicle = $this->swapi->getFromUri($vehicle->url);
             }
-
-
-
-
             $view = new View('CharacterView', $data);
+        } catch (GuzzleHttp\Exception\ClientException $exception) {
+            $this->throw404();
+        }
+    }
+
+    function buildVehiclePage(){
+        if(isset($_GET["vehicle"])){
+            $vehicle_id = $_GET["vehicle"];
+        }else{
+            $this->throw404();
+            die();
+        }
+        try {
+            $data["vehicle"] = $this->swapi->vehicles()->get($vehicle_id);
+            
+            foreach($data["vehicle"]->films as &$film){
+                $film = $this->swapi->getFromUri($film->url);
+            }
+
+            foreach($data["vehicle"]->pilots as &$pilot){
+                $pilot = $this->swapi->getFromUri($pilot->url);
+            }
+
+            $view = new View('VehicleView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
             $this->throw404();
         }
