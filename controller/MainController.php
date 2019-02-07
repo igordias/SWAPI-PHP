@@ -38,6 +38,12 @@ class MainController
             case 'species':
                 $this->buildSpeciesPage();
                 break;
+            case 'starship':
+                $this->buildStarshipPage();
+                break;
+            default:
+                $this->throw404();
+                break;
         }
     }
 
@@ -144,6 +150,25 @@ class MainController
             $this->gatherAllData($data["species"]->people);
 
             $view = new View('SpeciesView', $data);
+        } catch (GuzzleHttp\Exception\ClientException $exception) {
+            $this->throw404();
+        }
+    }
+
+    function buildStarshipPage(){
+        if(isset($_GET["starship"])){
+            $starship_id = $_GET["starship"];
+        }else{
+            $this->throw404();
+            die();
+        }
+        try {
+            $data["starship"] = $this->swapi->starships()->get($starship_id);
+        
+            $this->gatherAllData($data["starship"]->films);
+            $this->gatherAllData($data["starship"]->pilots);
+
+            $view = new View('StarshipView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
             $this->throw404();
         }
