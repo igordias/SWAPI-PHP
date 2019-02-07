@@ -156,4 +156,20 @@ class SWAPI
 
         throw new \UnexpectedValueException(sprintf("Could not match a URI to an endpoint handler for %s", $uri));
     }
+
+    /**
+     * @param string $url
+     * @return object SWAPI Model
+     * @throws \UnexpectedValueException When ID is not found
+     */
+    public function extractIdFromUrl($uri)
+    {
+        if (preg_match("/\/api\/(\w+)\/(\d+)(\/|$)/", $uri, $matches) !== false) {
+            if(is_numeric($matches[2])){
+                return $matches[2];
+            }
+        }
+
+        throw new \UnexpectedValueException(sprintf("Could not extract the ID from %s", $uri));
+    }
 }

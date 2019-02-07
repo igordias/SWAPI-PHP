@@ -37,6 +37,8 @@ class Vehicle
     /** @var string */
     public $url;
 
+    public $id;
+
     public function __construct($url = null)
     {
         $this->url = $url;

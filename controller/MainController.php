@@ -56,28 +56,17 @@ class MainController
         try {
             $data["film"] = $this->swapi->films()->get($episode_id);
         
-            foreach($data["film"]->species as &$species){
-                $species = $this->swapi->getFromUri($species->url);
-            }
-            foreach($data["film"]->starships as &$starship){
-                $starship = $this->swapi->getFromUri($starship->url);
-            }
-            foreach($data["film"]->vehicles as &$vehicle){
-                $vehicle = $this->swapi->getFromUri($vehicle->url);
-            }
-            foreach($data["film"]->characters as &$character){
-                $character = $this->swapi->getFromUri($character->url);
-            }
-            foreach($data["film"]->planets as &$planet){
-                $planet = $this->swapi->getFromUri($planet->url);
-            }
+            $this->gatherAllData($data["film"]->species);
+            $this->gatherAllData($data["film"]->starships);
+            $this->gatherAllData($data["film"]->vehicles);
+            $this->gatherAllData($data["film"]->characters);
+            $this->gatherAllData($data["film"]->planets);
 
             $view = new View('MovieView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
             $this->throw404();
         }
     }
-
     function buildPlanetPage(){
         if(isset($_GET["planet"])){
             $planet_id = $_GET["planet"];
@@ -88,12 +77,8 @@ class MainController
         try {
             $data["planet"] = $this->swapi->planets()->get($planet_id);
         
-            foreach($data["planet"]->residents  as &$resident){
-                $resident = $this->swapi->getFromUri($resident->url);
-            }
-            foreach($data["planet"]->films as &$film){
-                $film = $this->swapi->getFromUri($film->url);
-            }
+            $this->gatherAllData($data["planet"]->residents);
+            $this->gatherAllData($data["planet"]->films);
 
             $view = new View('PlanetView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
@@ -113,18 +98,11 @@ class MainController
             
             $data["character"]->homeworld = $this->swapi->getFromUri($data["character"]->homeworld->url);
 
-            foreach($data["character"]->films as &$film){
-                $film = $this->swapi->getFromUri($film->url);
-            }
-            foreach($data["character"]->species as &$species){
-                $species = $this->swapi->getFromUri($species->url);
-            }
-            foreach($data["character"]->starships as &$starship){
-                $starship = $this->swapi->getFromUri($starship->url);
-            }
-            foreach($data["character"]->vehicles as &$vehicle){
-                $vehicle = $this->swapi->getFromUri($vehicle->url);
-            }
+            $this->gatherAllData($data["character"]->films);
+            $this->gatherAllData($data["character"]->species);
+            $this->gatherAllData($data["character"]->starships);
+            $this->gatherAllData($data["character"]->vehicles);
+
             $view = new View('CharacterView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
             $this->throw404();
@@ -141,13 +119,8 @@ class MainController
         try {
             $data["vehicle"] = $this->swapi->vehicles()->get($vehicle_id);
             
-            foreach($data["vehicle"]->films as &$film){
-                $film = $this->swapi->getFromUri($film->url);
-            }
-
-            foreach($data["vehicle"]->pilots as &$pilot){
-                $pilot = $this->swapi->getFromUri($pilot->url);
-            }
+            $this->gatherAllData($data["vehicle"]->films);
+            $this->gatherAllData($data["vehicle"]->pilots);
 
             $view = new View('VehicleView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
@@ -167,13 +140,8 @@ class MainController
             
             $data["species"]->homeworld = $this->swapi->getFromUri($data["species"]->homeworld->url);
 
-            foreach($data["species"]->films as &$film){
-                $film = $this->swapi->getFromUri($film->url);
-            }
-
-            foreach($data["species"]->people as &$person){
-                $person = $this->swapi->getFromUri($person->url);
-            }
+            $this->gatherAllData($data["species"]->films);
+            $this->gatherAllData($data["species"]->people);
 
             $view = new View('SpeciesView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
@@ -183,6 +151,13 @@ class MainController
 
     function throw404(){
         $view = new View('404', null);
+    }
+
+    function gatherAllData(&$obj){
+        foreach($obj as &$o){
+            $o = $this->swapi->getFromUri($o->url);
+            $o->id = $this->swapi->extractIdFromUrl($o->url);
+        }
     }
 
 }
