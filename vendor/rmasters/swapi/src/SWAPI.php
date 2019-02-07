@@ -149,6 +149,8 @@ class SWAPI
                     return $this->starships()->get($matches[2]);
                 case "vehicles":
                     return $this->vehicles()->get($matches[2]);
+                case "people":
+                    return $this->characters()->get($matches[2]);
             }
         }
 

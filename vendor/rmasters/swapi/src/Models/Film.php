@@ -11,6 +11,8 @@ class Film
     /** @var string */
     public $opening_crawl;
     /** @var string */
+    public $release_date;
+    /** @var string */
     public $director;
     /** @var string */
     public $producer;

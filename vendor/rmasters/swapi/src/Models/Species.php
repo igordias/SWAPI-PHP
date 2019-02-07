@@ -21,7 +21,7 @@ class Species
     public $skin_colors;
     /** @var string */
     public $language;
-    /** @var \SWAPI\Models\Planet */
+    /** @var \SWAPI\Models\Planet|null */
     public $homeworld;
     /** @var \SWAPI\Models\Character[] */
     public $people;
