@@ -61,11 +61,11 @@ class MainController
         }
         try {
             $data["film"] = $this->swapi->films()->get($episode_id);
-        
+            
+            $this->gatherAllData($data["film"]->characters);
             $this->gatherAllData($data["film"]->species);
             $this->gatherAllData($data["film"]->starships);
             $this->gatherAllData($data["film"]->vehicles);
-            $this->gatherAllData($data["film"]->characters);
             $this->gatherAllData($data["film"]->planets);
 
             $view = new View('MovieView', $data);
@@ -130,7 +130,6 @@ class MainController
             
             $this->gatherAllData($data["vehicle"]->films);
             $this->gatherAllData($data["vehicle"]->pilots);
-
             $view = new View('VehicleView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
             $this->throw404();
@@ -184,12 +183,23 @@ class MainController
         $view = new View('404', null);
     }
 
-    function gatherAllData(&$obj){
-        foreach($obj as &$o){
-            $o = $this->swapi->getFromUri($o->url);
-            $o->id = $this->swapi->extractIdFromUrl($o->url);
+    function gatherAllData(&$objArray){
+        if(count($objArray) > 0){
+            $objType = gettype($objArray[0]);
+            if($objType == 'object'){
+                foreach($objArray as &$o){
+                    $o = $this->swapi->getFromUri($o->url);
+                    $o->id = $this->swapi->extractIdFromUrl($o->url);
+                }
+            }else if($objType == 'string'){
+                foreach($objArray as &$o){
+                    $o = $this->swapi->getFromUri($o);
+                    $o->id = $this->swapi->extractIdFromUrl($o->url);
+                }
+            }else{
+                throw new Exception("gatherAllData() Invalid object format received: $objType");
+            }
         }
     }
-
 }
 ?>
