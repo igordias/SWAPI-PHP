@@ -20,14 +20,17 @@ class MainController
 
     function buildPage($page){
         switch($page){
+            case 'index':
+                $this->buildIndex();
+                break;
             case 'movie':
                 $this->buildMoviePage();
                 break;
             case 'planet':
                 $this->buildPlanetPage();
                 break;
-            case 'index':
-                $this->buildIndex();
+            case 'character':
+                $this->buildCharPage();
                 break;
         }
     }
@@ -87,6 +90,40 @@ class MainController
             }
 
             $view = new View('PlanetView', $data);
+        } catch (GuzzleHttp\Exception\ClientException $exception) {
+            $this->throw404();
+        }
+    }
+
+    function buildCharPage(){
+        if(isset($_GET["char"])){
+            $char_id = $_GET["char"];
+        }else{
+            $this->throw404();
+            die();
+        }
+        try {
+            $data["character"] = $this->swapi->characters()->get($char_id);
+            
+            $data["character"]->homeworld = $this->swapi->getFromUri($data["character"]->homeworld->url);
+
+            foreach($data["character"]->films as &$film){
+                $film = $this->swapi->getFromUri($film->url);
+            }
+            foreach($data["character"]->species as &$species){
+                $species = $this->swapi->getFromUri($species->url);
+            }
+            foreach($data["character"]->starships as &$starship){
+                $starship = $this->swapi->getFromUri($starship->url);
+            }
+            foreach($data["character"]->vehicles as &$vehicle){
+                $vehicle = $this->swapi->getFromUri($vehicle->url);
+            }
+
+
+
+
+            $view = new View('CharacterView', $data);
         } catch (GuzzleHttp\Exception\ClientException $exception) {
             $this->throw404();
         }
